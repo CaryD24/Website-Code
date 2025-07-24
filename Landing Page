@@ -1,0 +1,148 @@
+// Velo API Reference: https://www.wix.com/velo/reference/api-overview/introduction
+
+import wixLocation from 'wix-location';
+import { session } from 'wix-storage';
+import wixWindow from 'wix-window';
+
+let count = 1;
+
+
+
+
+function setupHoverTextBox(buttonId, textBoxId) {
+    $w(textBoxId).hide();
+
+    $w(buttonId).onMouseIn(() => {
+        $w(textBoxId).show();
+    });
+
+    $w(buttonId).onMouseOut(() => {
+        $w(textBoxId).hide();
+    });
+}
+
+function setupPasswordSubmission() {
+    $w('#submitButton').onClick(() => {
+        const input = $w('#passwordInput').value.toLowerCase();
+        const correctPassword = ""; 
+
+        if (input === correctPassword) {
+            session.setItem("authenticated", "true");
+            wixLocation.to("/secret-page");
+        } else {
+            showHintMessage();
+        }
+    });
+}
+
+function showHintMessage() {
+    let message = "";
+
+    switch (count) {
+    case 1:
+        message = "Hint: The secret you seek is not far away, It's hidden in words that resumes display";
+        break;
+    case 2:
+        message = "Don't just read - observe the start, The first of each line might play a part";
+        break;
+    case 3:
+        message = "One letter per bullet, from top to the base, Together they whisper a hopeful phrase";
+        break;
+    case 4:
+        message = "Really? Still nothing?";
+        break;
+    case 5:
+        message = "Dude, its just the first letter of each bullet point";
+        break;
+    case 6:
+        message = "No spaces, all together";
+        break;
+    case 7:
+        message = "I literally converted everything to lowercase on my end to make this easier";
+        break;
+    case 8:
+        message = "Ok, no more. You're getting the default message now. Im gonna leave the guess counter in here so you can sit with that.";
+        break;
+    default:
+        if (count !== 999) {
+            message = "Incorrect, Please try again";
+            $w('#count').text = count.toString();
+            $w('#count').show();
+        }
+    }
+
+    $w('#errorMessage').text = message;
+    $w('#errorMessage').show();
+    count++;
+}
+
+
+
+
+
+$w.onReady(function () {
+
+    //FOR DESKTOP USERS
+    if (wixWindow.formFactor === "Desktop") {
+
+        setupHoverTextBox("#experienceButton", "#experienceTextBox");
+        setupHoverTextBox("#resumeButton", "#resumeTextBox");
+        setupHoverTextBox("#projectsButton", "#projectsTextBox");
+        setupHoverTextBox("#aboutButton", "#aboutTextBox");
+        setupHoverTextBox("#educationButton", "#educationTextBox");
+        setupHoverTextBox("#CFAbutton","#CFATextBox");
+
+    }
+
+    //FOR MOBILE USERS
+    else {
+        $w("#experienceTextBox").show();
+
+        $w("#experienceTextBox").onClick(() => {
+            wixLocation.to("/experience");
+        });
+        $w("#mobileExperienceHeader").onClick(() => {
+            wixLocation.to("/experience");
+        });
+
+
+
+
+        $w("#projectsTextBox").onClick(() => {
+            wixLocation.to("/projects");
+        });
+        $w("#mobileProjectsHeader").onClick(() => {
+            wixLocation.to("/projects");
+        });
+
+
+        $w("#aboutTextBox").onClick(() => {
+            wixLocation.to("/about");
+        });
+        $w("#mobileAboutHeader").onClick(() => {
+            wixLocation.to("/about");
+        });
+
+
+        $w("#educationTextBox").onClick(() => {
+            wixLocation.to("/education");
+        });
+        $w("#mobileEducationHeader").onClick(() => {
+            wixLocation.to("/education");
+        });
+
+
+        $w("#CFATextBox").onClick(() => {
+            wixLocation.to("/CS For All");
+        });
+        $w("#mobileCFAheader").onClick(() => {
+            wixLocation.to("/CS For All");
+        });
+
+
+    }
+
+    //FOR BOTH PLATFORM USERS
+    setupPasswordSubmission();
+
+});
